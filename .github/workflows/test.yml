@@ -36,8 +36,8 @@ jobs:
         with:
           node-version: '16'
 
-  call-reusable-workflow:
-    uses: ./.github/workflows/reusable.yml
-    with:
-      node-env: production
-      api-url: https://api.example.com
+      - name : call-reusable-workflow
+        uses: ./.github/workflows/reusable.yml
+        with:
+          node-env: production
+          api-url: https://api.example.com
