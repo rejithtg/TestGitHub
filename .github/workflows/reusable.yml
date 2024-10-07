@@ -20,4 +20,4 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Print input variables
-        run: echo "Node Environment: ${{ inputs.node-env }}, API URL: ${{ inputs.api-url }}"
+        run: echo "Node Environment"
