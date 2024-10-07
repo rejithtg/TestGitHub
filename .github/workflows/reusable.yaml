@@ -1,0 +1,23 @@
+# .github/workflows/reusable-workflow.yml
+name: Reusable Workflow
+
+on:
+  workflow_call:
+    inputs:
+      node-env:
+        required: true
+        type: string
+      api-url:
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Print input variables
+        run: echo "Node Environment: ${{ inputs.node-env }}, API URL: ${{ inputs.api-url }}"
