@@ -35,3 +35,9 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '16'
+
+  call-reusable-workflow:
+    uses: ./.github/workflows/reusable-workflow.yml
+    with:
+      node-env: production
+      api-url: https://api.example.com
