@@ -1,5 +1,5 @@
 # .github/workflows/reusable-workflow.yml
-name: Reusable Workflow
+name: reusable
 
 on:
   workflow_call:
