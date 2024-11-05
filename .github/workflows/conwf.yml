@@ -15,20 +15,26 @@ jobs:
       - name: Set up matrix values
         id: set-matrix
         run: |
-          # Get the matrix_values input as a string and split by commas
-          echo "matrix_values=${{ github.event.inputs.matrix_values }}" >> $GITHUB_ENV
-          echo "matrix_values_array=($(echo ${{ github.event.inputs.matrix_values }} | tr ',' '\n'))" >> $GITHUB_ENV
-          echo "Matrix values: ${{ env.matrix_values_array }}"
-    
+          # Get the matrix_values input as a string
+          matrix_values="${{ github.event.inputs.matrix_values }}"
+          
+          # Convert the input string into a JSON array format
+          matrix_values_json="[\"$(echo $matrix_values | tr ',' '","')\"]"
+          
+          # Output the JSON array
+          echo "Matrix values: $matrix_values_json"
+          
+          # Set it as an output so it can be used in other jobs
+          echo "matrix_values=$matrix_values_json" >> $GITHUB_ENV
+
   conditional-jobs:
     needs: setup-matrix
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        value: ${{ fromJson('["' + join(needs.setup-matrix.outputs.matrix_values_array, '","') + '"]') }}
+        value: ${{ fromJson(env.matrix_values) }}
       fail-fast: false
     steps:
       - name: Print matrix value
         run: |
           echo "Current matrix value: ${{ matrix.value }}"
-          
