@@ -1,0 +1,34 @@
+name: Conditional Workflow Example
+
+on:
+  workflow_dispatch:
+    inputs:
+      matrix_values:
+        description: 'Comma-separated string values'
+        required: true
+        default: 'value1,value2,value3'
+
+jobs:
+  setup-matrix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up matrix values
+        id: set-matrix
+        run: |
+          # Get the matrix_values input as a string and split by commas
+          echo "matrix_values=${{ github.event.inputs.matrix_values }}" >> $GITHUB_ENV
+          echo "matrix_values_array=($(echo ${{ github.event.inputs.matrix_values }} | tr ',' '\n'))" >> $GITHUB_ENV
+          echo "Matrix values: ${{ env.matrix_values_array }}"
+    
+  conditional-jobs:
+    needs: setup-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        value: ${{ fromJson('["' + join(needs.setup-matrix.outputs.matrix_values_array, '","') + '"]') }}
+      fail-fast: false
+    steps:
+      - name: Print matrix value
+        run: |
+          echo "Current matrix value: ${{ matrix.value }}"
+          
