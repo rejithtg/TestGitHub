@@ -1,0 +1,22 @@
+name: Workflow with Matrix
+
+on:
+  workflow_run:
+    workflows: ["Conditional Workflow"]
+    types:
+      - completed
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        values: ${{ fromJson('["' + join(github.event.workflow_run.outputs.array, '","') + '"]') }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Print matrix values
+        if: ${{ matrix.values != 'skip' }}
+        run: echo "Processing ${{ matrix.values }}"

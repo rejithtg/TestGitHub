@@ -1,0 +1,24 @@
+name: Conditional Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      array_input:
+        description: 'A comma-separated list of strings'
+        required: true
+        default: 'value1,value2,value3'
+
+jobs:
+  process_input:
+    runs-on: ubuntu-latest
+    outputs:
+      array: ${{ steps.set-output.outputs.array }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set array variable
+        id: set-output
+        run: |
+          echo "Array input: ${{ github.event.inputs.array_input }}"
+          echo "::set-output name=array::${{ github.event.inputs.array_input }}"
