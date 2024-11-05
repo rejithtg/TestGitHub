@@ -11,11 +11,13 @@ on:
 jobs:
   setup-matrix:
     runs-on: ubuntu-latest
+    outputs:
+      matrix_values: ${{ steps.set-matrix.outputs.matrix_values }}
     steps:
       - name: Set up matrix values
         id: set-matrix
         run: |
-          # Get the matrix_values input as a string
+          # Get the matrix_values input (a comma-separated string)
           matrix_values="${{ github.event.inputs.matrix_values }}"
           
           # Convert the input string into a JSON array format
@@ -24,15 +26,15 @@ jobs:
           # Output the JSON array
           echo "Matrix values: $matrix_values_json"
           
-          # Set it as an output so it can be used in other jobs
-          echo "matrix_values=$matrix_values_json" >> $GITHUB_ENV
+          # Set matrix_values as output for other jobs to use
+          echo "::set-output name=matrix_values::$matrix_values_json"
 
   conditional-jobs:
     needs: setup-matrix
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        value: ${{ fromJson(env.matrix_values) }}
+        value: ${{ fromJson(needs.setup-matrix.outputs.matrix_values) }}
       fail-fast: false
     steps:
       - name: Print matrix value
